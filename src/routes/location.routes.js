@@ -42,9 +42,12 @@ router.get('/:id/latest', authenticate, async (req, res) => {
   if (cached) return res.json(JSON.parse(cached));
 
   const db = await pool.query(
-    `SELECT * FROM locations 
-     WHERE vehicle_id=$1 
-     ORDER BY timestamp DESC LIMIT 1`,
+    `SELECT l.*, v.plate_number, v.device_id
+    FROM locations l
+    INNER JOIN vehicles v 
+    ON l.vehicle_id = v.id 
+     WHERE l.vehicle_id=$1 
+     ORDER BY l.timestamp DESC LIMIT 1`,
     [req.params.id]
   );
 
@@ -56,9 +59,12 @@ router.get('/:id/history', authenticate, async (req, res) => {
   const { from, to } = req.query;
 
   const result = await pool.query(
-    `SELECT * FROM locations 
-     WHERE vehicle_id=$1 
-     AND timestamp BETWEEN $2 AND $3`,
+    `SELECT l.*, v.plate_number, v.device_id
+    FROM locations l
+    INNER JOIN vehicles v 
+    ON l.vehicle_id = v.id
+     WHERE l.vehicle_id=$1 
+     AND l.timestamp BETWEEN $2 AND $3`,
     [req.params.id, from, to]
   );
   res.json(result.rows);
