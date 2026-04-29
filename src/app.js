@@ -7,7 +7,17 @@ import vehicleRoutes from './routes/vehicle.routes.js';
 import locationRoutes from './routes/location.routes.js';
 
 import swaggerUi from 'swagger-ui-express';
-import swaggerDoc from '../swagger.json' assert { type: 'json' };
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const swaggerDoc = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '../swagger.json'), 'utf-8')
+);
+
 
 dotenv.config();
 
