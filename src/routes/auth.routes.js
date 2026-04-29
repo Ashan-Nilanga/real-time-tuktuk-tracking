@@ -9,7 +9,7 @@ router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   const user = (await pool.query(
-    'SELECT * FROM users WHERE username=$1',
+    'SELECT * FROM tuktuk.users WHERE username=$1',
     [username]
   )).rows[0];
 
