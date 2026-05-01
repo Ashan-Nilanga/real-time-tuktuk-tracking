@@ -15,6 +15,7 @@ import vehicleRoutes from './routes/vehicle.routes.js';
 import locationRoutes from './routes/location.routes.js';
 import statsRoutes from './routes/stats.routes.js';
 import { notFoundHandler, globalErrorHandler } from './middleware/errorHandler.js';
+import swaggerDoc from './swagger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,9 +40,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 
-const swaggerDoc = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../swagger.json'), 'utf-8')
-);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'TukTuk Tracking API Docs'
