@@ -1,23 +1,25 @@
 {
   "name": "tuktuk-tracking-api",
   "version": "1.0.0",
+  "description": "Real-Time Three-Wheeler (Tuk-Tuk) Tracking & Movement Logging System for Sri Lanka Law Enforcement",
   "type": "module",
   "scripts": {
-    "start": "node src/app.js",
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
     "seed": "node src/seed/seed.js",
-    "simulate": "node simulation/simulator.js"
+    "simulate": "node src/simulation/simulation.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.0",
     "express": "^4.18.2",
-    "ioredis": "^5.3.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
-    "node-fetch": "^3.3.2",
+    "morgan": "^1.10.0",
     "pg": "^8.11.3",
-    "redis": "^5.12.1",
-    "swagger-ui-express": "^5.0.0",
-    "uuid": "^9.0.0"
+    "swagger-ui-express": "^5.0.0"
   }
 }

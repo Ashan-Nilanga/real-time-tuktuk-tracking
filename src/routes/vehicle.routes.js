@@ -1,25 +1,60 @@
 import express from 'express';
-import { pool } from '../config/db.js';
+import {
+  getAllVehicles, createVehicle, getVehicleById,
+  updateVehicle, deleteVehicle, getVehicleLocation, getVehicleHistory
+} from '../controllers/vehicle.controller.js';
 import { authenticate } from '../middleware/auth.js';
 import { authorize } from '../middleware/role.js';
+import { scopeToProvince, scopeToDistrict } from '../middleware/scopeFilter.js';
+import { validate } from '../middleware/validate.js';
+import { createVehicleSchema, updateVehicleSchema } from '../utils/validators.js';
 
 const router = express.Router();
 
-router.post('/', authenticate, authorize(['ADMIN']), async (req, res) => {
-  const { id, plateNumber, deviceId, districtId } = req.body;
+router.get('/',
+  authenticate,
+  authorize(['SUPER_ADMIN', 'PROVINCIAL_ADMIN', 'STATION_OFFICER']),
+  scopeToProvince,
+  scopeToDistrict,
+  getAllVehicles
+);
 
-  await pool.query(
-    `INSERT INTO vehicles VALUES ($1,$2,$3,$4)`,
-    [id, plateNumber, deviceId, districtId]
-  );
+router.post('/',
+  authenticate,
+  authorize(['SUPER_ADMIN']),
+  validate(createVehicleSchema),
+  createVehicle
+);
 
-  res.send("Vehicle added");
-});
+router.get('/:id',
+  authenticate,
+  authorize(['SUPER_ADMIN', 'PROVINCIAL_ADMIN', 'STATION_OFFICER']),
+  getVehicleById
+);
 
-router.get('/', authenticate,
-  authorize(['ADMIN', 'PROVINCIAL']), async (req, res) => {
-  const data = await pool.query('SELECT * FROM vehicles');
-  res.json(data.rows);
-});
+router.put('/:id',
+  authenticate,
+  authorize(['SUPER_ADMIN']),
+  validate(updateVehicleSchema),
+  updateVehicle
+);
+
+router.delete('/:id',
+  authenticate,
+  authorize(['SUPER_ADMIN']),
+  deleteVehicle
+);
+
+router.get('/:id/location',
+  authenticate,
+  authorize(['SUPER_ADMIN', 'PROVINCIAL_ADMIN', 'STATION_OFFICER']),
+  getVehicleLocation
+);
+
+router.get('/:id/history',
+  authenticate,
+  authorize(['SUPER_ADMIN', 'PROVINCIAL_ADMIN', 'STATION_OFFICER']),
+  getVehicleHistory
+);
 
 export default router;

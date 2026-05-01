@@ -1,19 +1,18 @@
 import jwt from 'jsonwebtoken';
+import { sendError } from '../utils/response.js';
+
 
 export const authenticate = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
-    console.log("No header");
-    return res.sendStatus(401);
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return sendError(res, 'Authentication required. Please provide a valid Bearer token.', 401);
   }
 
-  // Extract token from "Bearer <token>"
-  const token = authHeader.split(" ")[1];
+  const token = authHeader.split(' ')[1];
 
   if (!token) {
-    console.log("Token missing");
-    return res.sendStatus(401);
+    return sendError(res, 'Token missing from Authorization header.', 401);
   }
 
   try {
@@ -21,7 +20,9 @@ export const authenticate = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    console.log("JWT ERROR:", err.message);
-    return res.sendStatus(403);
+    if (err.name === 'TokenExpiredError') {
+      return sendError(res, 'Token has expired. Please login again.', 401);
+    }
+    return sendError(res, 'Invalid or malformed token.', 403);
   }
 };
