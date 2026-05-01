@@ -22,7 +22,8 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-app.use(helmet({ contentSecurityPolicy: false }));
+// Disabled helmet temporarily for EC2 HTTP testing
+// app.use(helmet({ contentSecurityPolicy: false }));
 
 const corsOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',').map(s => s.trim())
