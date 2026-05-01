@@ -1,7 +1,7 @@
 import { pool } from '../config/db.js';
 import { sendSuccess, sendError } from '../utils/response.js';
 
-/
+
 export const getAllProvinces = async (req, res, next) => {
   try {
     const result = await pool.query(
